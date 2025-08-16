@@ -1,0 +1,27 @@
+[project]
+name = "startup-idea-analyzer-agent"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "asyncio>=4.0.0",
+    "docx>=0.2.4",
+    "google-search-results>=2.4.2",
+    "langchain>=0.3.27",
+    "langchain-google-genai>=2.1.9",
+    "langchain-mcp-adapters>=0.1.9",
+    "langgraph>=0.6.5",
+    "mcp[cli]>=1.13.0",
+    "numpy>=2.3.2",
+    "pandas>=2.3.1",
+    "polygon-api-client>=1.15.3",
+    "praw>=7.8.1",
+    "pydantic>=2.11.7",
+    "python-dotenv>=1.1.1",
+    "reportlab>=4.4.3",
+    "requests>=2.32.4",
+    "serp>=0.1.5",
+    "gradio>=4.0.0",
+    "tweepy>=4.16.0",
+]
