@@ -1,193 +1,375 @@
 # Startup Idea Analyzer Agent
 
-This project is a sophisticated, multi-step AI agent designed to automate the process of researching and analyzing startup ideas. Given a simple query (e.g., "a platform for local artists to sell their work"), the agent performs web searches, scrapes relevant articles, extracts key information, and generates a final, structured analysis with recommendations.
+An AI-powered startup analysis platform that automatically researches and evaluates startup ideas using real-time market data, competitor analysis, and social media sentiment. Built with a modern Python stack featuring LangGraph orchestration, Model Context Protocol (MCP) for tool integration, and a beautiful Gradio web interface.
 
-The agent is built with a modern Python stack, features a modular, scalable architecture using the Model Context Protocol (MCP), and has a user-friendly web interface created with Gradio.
+## 🚀 Features
 
-## Features
+- **Multi-Step AI Workflow**: Automated 5-step analysis pipeline using LangGraph
+- **Real-Time Market Research**: Web search, competitor analysis, and financial data
+- **Social Media Intelligence**: Reddit and Twitter sentiment analysis
+- **Structured Output**: Pydantic models ensure data consistency and validation
+- **Multiple Interfaces**: Web UI (Gradio) and Command Line Interface
+- **Report Generation**: Export analysis in Text, PDF, and Word formats
+- **Modular Architecture**: MCP-based tool servers for easy extension
+- **Deployment Ready**: Includes Hugging Face Spaces deployment configuration
 
-- **Multi-Step Workflow**: Utilizes LangGraph to create a robust, multi-step workflow (e.g., market research → competitor analysis → viability assessment).
+## 🏗️ Architecture
 
-- **Modular & Scalable Architecture**: Uses the Model Context Protocol (MCP) to connect the agent to a suite of external, independently-run tool servers. This makes the system easy to extend and maintain.
+The system uses a client-server architecture with MCP (Model Context Protocol):
 
-- **Dynamic Web Search**: Employs the SERP API via a dedicated MCP server to perform real-time, in-depth web searches for market trends, existing competitors, and potential customer bases.
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Main Agent    │    │   MCP Client    │    │   Tool Servers  │
+│  (LangGraph)    │◄──►│  (Orchestrator) │◄──►│  (Data Sources) │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         ▼                       ▼                       ▼
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Web Interface │    │   CLI Interface │    │   External APIs │
+│    (Gradio)     │    │   (Terminal)    │    │   (SERP, etc.)  │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+```
 
-- **AI-Powered Analysis**: Leverages Google's Gemini 2.5 Flash model for intelligent data extraction and final analysis of the startup idea's potential.
+## 🔧 APIs & External Services
 
-- **Structured Output**: Uses Pydantic models to ensure the data passed between steps is structured and validated.
+### Core APIs (Required)
 
-- **Resilient Error Handling**: Includes a fallback mechanism to recover from failed steps and continue the research process.
+- **Google Gemini 2.5 Flash**: Primary LLM for analysis and reasoning
+- **SERP API**: Web search and news search functionality
 
-- **Interactive UI**: Provides both a beautiful web interface built with Gradio and a command-line interface for different use cases.
+### Optional APIs (Enhanced Features)
 
-## Tech Stack
+- **Polygon.io API**: Financial market data and company information
+- **Reddit API (PRAW)**: Social media sentiment and trend analysis
+- **Twitter API v2**: Social media sentiment and engagement metrics
 
-- **Orchestration**: LangChain & LangGraph
-- **Tool Integration**: Model Context Protocol (MCP)
-- **LLM**: Google Gemini 2.5 Flash
-- **Web Search**: SERP API
-- **Web UI**: Gradio
-- **Package Management**: uv
-- **Language**: Python 3.10+
+### Internal APIs
 
-## Architecture
+- **Model Context Protocol (MCP)**: Tool server communication
+- **LangChain**: LLM orchestration and tool integration
+- **LangGraph**: Workflow state management and execution
 
-This agent uses a client-server architecture powered by MCP. The core LangGraph agent acts as the "client" that orchestrates the analysis. It connects to one or more specialized MCP "servers," which are small, independent applications that provide specific tools.
+## 📁 Project Structure
 
-This decoupled design means you can easily add, remove, or update tools without changing the core agent logic.
+```
+startup-idea-analyzer-agent/
+├── src/                          # Core application logic
+│   ├── workflow.py              # LangGraph workflow definition
+│   ├── models.py                # Pydantic data models
+│   └── prompts.py               # LLM prompt templates
+├── server/                      # MCP tool servers
+│   ├── serp_server.py           # Web search server
+│   ├── market_data_server.py    # Financial data server
+│   └── social_trends_server.py  # Social media analysis server
+├── main.py                      # CLI application entry point
+├── gradio_app.py                # Web interface application
+├── app.py                       # Hugging Face Spaces deployment app
+├── requirements.txt             # Python dependencies for deployment
+├── pyproject.toml               # Project configuration and dependencies
+├── uv.lock                      # Dependency lock file
+├── .python-version              # Python version specification
+├── .gitignore                   # Git ignore rules
+├── DEPLOYMENT_GUIDE.md          # Hugging Face Spaces deployment guide
+├── README_HF.md                 # Hugging Face Spaces specific README
+└── README.md                    # This file
+```
+
+## 🛠️ Implementation Details
+
+### Core Workflow (`src/workflow.py`)
+
+The main analysis pipeline consists of 5 sequential steps:
+
+1. **Market Research**: Web search for market size, trends, and demographics
+2. **Competitor Analysis**: Identify and analyze existing competitors
+3. **Social Trends**: Analyze Reddit and Twitter sentiment
+4. **Viability Assessment**: Score startup potential (1-10)
+5. **Final Recommendations**: Generate actionable insights
+
+### Data Models (`src/models.py`)
+
+Structured Pydantic models for:
+
+- `MarketAnalysis`: Market size, growth, target audience
+- `CompetitorInfo`: Competitor details and positioning
+- `StartupAnalysis`: Viability scoring and assessment
+- `StartupIdea`: Complete startup information
+- `ResearchState`: Workflow state management
 
 ### Tool Servers
 
-- **SERP API Server**: Exposes a tool for performing deep web searches. This is the primary data gathering source for the agent.
+#### SERP Server (`server/serp_server.py`)
 
-- **Market Data Server**: Connects to financial data APIs to fetch information on market size, industry growth rates, and public competitor financials.
+- **Purpose**: Web search and news search
+- **Tools**: `search`, `search_news`
+- **API**: SERP API (Google Search)
+- **Features**: Location-based search, result filtering
 
-- **Social Media Trends Server**: Provides tools to analyze trends, discussions, and sentiment on platforms like Reddit or X to gauge public interest and identify pain points.
+#### Market Data Server (`server/market_data_server.py`)
 
-## Setup and Installation
+- **Purpose**: Financial market analysis
+- **Tools**: `get_market_size`, `get_growth_trends`, `get_competitor_financials`
+- **API**: Polygon.io (optional)
+- **Features**: Market cap analysis, growth trends, competitor financials
 
-Follow these steps to set up the project environment.
+#### Social Trends Server (`server/social_trends_server.py`)
 
-### 1. Clone the Repository
+- **Purpose**: Social media sentiment analysis
+- **Tools**: `analyze_trends`, `reddit_analysis`, `twitter_sentiment`
+- **APIs**: Reddit API (PRAW), Twitter API v2 (optional)
+- **Features**: Sentiment analysis, engagement metrics, trend identification
+
+### User Interfaces
+
+#### Web Interface (`gradio_app.py`)
+
+- **Framework**: Gradio
+- **Features**:
+  - Real-time progress tracking
+  - Beautiful dark theme UI
+  - Multiple export formats (TXT, PDF, DOCX)
+  - Interactive results display
+  - Environment validation
+
+#### CLI Interface (`main.py`)
+
+- **Features**:
+  - Interactive terminal interface
+  - Pretty-printed results
+  - File export capability
+  - Environment validation
+  - Error handling and recovery
+
+#### Hugging Face Spaces App (`app.py`)
+
+- **Purpose**: Optimized for Hugging Face Spaces deployment
+- **Features**:
+  - Streamlined Gradio interface
+  - Hugging Face Spaces specific configuration
+  - Optimized for cloud deployment
+  - Environment variable integration
+
+## 🚀 Quick Start
+
+### 1. Environment Setup
 
 ```bash
-git clone <your-repository-url>
-cd <your-repository-name>
+# Clone the repository
+git clone <repository-url>
+cd startup-idea-analyzer-agent
+
+# Install dependencies using uv
+uv sync
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your API keys
 ```
 
-### 2. Initialize Project
+### 2. Required API Keys
 
-Initialize the project with uv:
-
-```bash
-uv init .
-```
-
-### 3. Install Dependencies
-
-Use uv to install all the required packages from requirements.txt or do this:
-
-```bash
-uv add google-search-results python-dotenv langchain-google-genai langchain langgraph pydantic mcp "mcp[cli]" langchain-mcp-adapters gradio
-```
-
-### 4. Set Up Environment Variables
-
-Create a file named `.env` in the root of your project directory and add your API keys:
+Create a `.env` file with:
 
 ```env
-GOOGLE_API_KEY=your_google_api_key_here
-SERP_API_KEY=your_serp_api_key_here
+# Required APIs
+GOOGLE_API_KEY=your_gemini_api_key
+SERP_API_KEY=your_serp_api_key
+
+# Optional APIs (for enhanced features)
+POLYGON_API_KEY=your_polygon_api_key
+REDDIT_CLIENT_ID=your_reddit_client_id
+REDDIT_CLIENT_SECRET=your_reddit_client_secret
+TWITTER_BEARER_TOKEN=your_twitter_bearer_token
 ```
 
-## How to Run
+### 3. Run the Application
 
-### Option 1: Web Interface (Recommended)
-
-Launch the Gradio web application for a user-friendly interface:
+#### Web Interface (Recommended)
 
 ```bash
 uv run python gradio_app.py
 ```
 
-The web interface will:
+Open browser to `http://localhost:7860`
 
-- Automatically start MCP tool servers
-- Provide a beautiful, interactive UI
-- Display results with proper formatting
-- Allow downloading reports in text and JSON formats
-- Show real-time progress updates
-
-### Option 2: Command Line Interface
-
-Run the traditional CLI version:
+#### Command Line Interface
 
 ```bash
 uv run python main.py
 ```
 
-The CLI will:
-
-1. Validate your environment variables
-2. Initialize the workflow and connect to MCP servers
-3. Start an interactive terminal where you can enter startup ideas for analysis
-
-### Alternative: Manual Server Setup
-
-If you prefer to run the MCP servers manually (for debugging or development), you can start them in separate terminals:
+#### Hugging Face Spaces Deployment
 
 ```bash
-# Terminal 1: Start the SERP API server
-uv run python server/serp_server.py
-
-# Terminal 2: Start the Market Data server
-uv run python server/market_data_server.py
-
-# Terminal 3: Start the Social Media Trends server
-uv run python server/social_trends_server.py
+# Use app.py for Hugging Face Spaces
+uv run python app.py
 ```
 
-Then run either interface in a fourth terminal:
+## 🌐 Deployment Options
 
-```bash
-# For web interface
-uv run python gradio_app.py
+### Hugging Face Spaces (Recommended for Demo)
 
-# For CLI interface
-uv run python main.py
-```
+The project includes ready-to-deploy configuration for Hugging Face Spaces:
 
-## Project Structure
+1. **Files Included**:
 
-```
-.
-├── src/
-│   ├── __init__.py
-│   ├── workflow.py         # Defines the core LangGraph agent and MCP client logic
-│   ├── models.py           # Pydantic models for state and data structures
-│   └── prompts.py          # Contains all prompts for the LLM
-├── server/
-│   ├── serp_server.py      # MCP server for the SERP API
-│   ├── market_data_server.py # MCP server for financial data
-│   └── social_trends_server.py # MCP server for social media analysis
-├── .env                    # Stores API keys and environment variables
-├── .python-version         # Python version specification
-├── main.py                 # The CLI application entry point
-├── gradio_app.py           # The Gradio web application
-├── pyproject.toml          # Project configuration and dependencies
-└── README.md               # You are here!
-```
+   - `app.py`: Optimized Gradio app for Spaces
+   - `requirements.txt`: Dependencies for deployment
+   - `DEPLOYMENT_GUIDE.md`: Step-by-step deployment guide
+   - `README_HF.md`: Spaces-specific documentation
 
-## Usage
+2. **Quick Deployment**:
 
-### Web Interface (Recommended)
+   - Create new Space on Hugging Face
+   - Upload project files
+   - Set environment variables in Space settings
+   - Deploy automatically
 
-1. Launch the Gradio app: `uv run python gradio_app.py`
+3. **Features**:
+   - Free hosting
+   - Automatic HTTPS
+   - Easy environment variable management
+   - Community sharing
 
-2. Open your browser to the provided URL (usually http://127.0.0.1:7860 or http://localhost:7860)
+### Other Deployment Options
 
-3. Enter your startup idea in the text area (e.g., "a platform for local artists to sell their work")
+- **Railway**: For production SaaS applications
+- **Render**: For scalable web applications
+- **Google Cloud Run**: For enterprise deployments
+- **AWS Lambda**: For serverless API deployment
 
-4. Click "🚀 Analyze Idea" and wait for the analysis to complete
+## 📊 Analysis Output
 
-5. Review the comprehensive analysis including:
+The system generates comprehensive reports including:
 
-   - Market research and size assessment
-   - Competitor analysis and positioning
-   - Social media trends and sentiment
-   - Viability assessment with scoring
-   - Final recommendations and next steps
+### Market Analysis
 
-6. Download the full report in text or JSON format using the download buttons
+- Market size and growth projections
+- Target audience demographics
+- Market trends and barriers to entry
+- Regulatory considerations
 
-### Command Line Interface
+### Competitor Analysis
 
-1. Run the CLI: `uv run python main.py`
+- Top 5 competitors with detailed profiles
+- Business models and funding stages
+- Key features and competitive advantages
+- Pricing strategies and market positioning
 
-2. Enter your startup idea when prompted
+### Social Media Intelligence
 
-3. Wait for the analysis to complete (this may take a few minutes)
+- Reddit discussion analysis and sentiment
+- Twitter engagement metrics
+- Trending topics and public sentiment
+- Community feedback and pain points
 
-4. Review the results and optionally save to a text file
+### Viability Assessment
 
-5. Enter another idea or type 'quit' to exit
+- Overall viability score (1-10)
+- Market opportunity assessment
+- Competitive advantages and challenges
+- Monetization strategies
+- Risk assessment and time to market
+
+### Final Recommendations
+
+- Go/No-Go decision with reasoning
+- Immediate next steps
+- Key success factors
+- Risk mitigation strategies
+- Alternative pivot opportunities
+
+## 🔧 Configuration
+
+### Environment Variables
+
+- `GOOGLE_API_KEY`: Required for LLM analysis
+- `SERP_API_KEY`: Required for web search
+- `POLYGON_API_KEY`: Optional for financial data
+- `REDDIT_CLIENT_ID/SECRET`: Optional for Reddit analysis
+- `TWITTER_BEARER_TOKEN`: Optional for Twitter analysis
+
+### Customization
+
+- Modify prompts in `src/prompts.py`
+- Add new tools in server files
+- Extend data models in `src/models.py`
+- Customize workflow in `src/workflow.py`
+- Update deployment configuration in `app.py`
+
+## 🛡️ Error Handling
+
+The system includes robust error handling:
+
+- Graceful fallbacks when APIs are unavailable
+- Partial analysis when some tools fail
+- Detailed error logging and user feedback
+- Automatic retry mechanisms for transient failures
+
+## 📈 Performance
+
+- **Typical Analysis Time**: 2-5 minutes per startup idea
+- **Concurrent Users**: Limited by API rate limits
+- **Data Sources**: Real-time web search + cached financial data
+- **Scalability**: MCP architecture allows horizontal scaling
+- **Python Version**: 3.13+ (specified in .python-version)
+
+## 🚀 Tech Stack
+
+### Core Framework & Orchestration
+
+- **LangGraph** - Workflow orchestration and state management
+- **LangChain** - LLM integration and tool management
+- **Model Context Protocol (MCP)** - Tool server communication protocol
+
+### AI & Machine Learning
+
+- **Google Gemini 2.5 Flash** - Primary LLM for analysis and reasoning
+- **Pydantic** - Data validation and serialization
+- **Structured Output** - LLM response formatting
+
+### Web Development & UI
+
+- **Gradio** - Web interface framework
+- **HTML/CSS** - Custom styling and layout
+- **JavaScript** - Interactive UI components
+
+### External APIs & Services
+
+- **SERP API** - Web search and news search
+- **Polygon.io API** - Financial market data (optional)
+- **Reddit API (PRAW)** - Social media analysis (optional)
+- **Twitter API v2 (Tweepy)** - Social media sentiment (optional)
+
+### Development & Build Tools
+
+- **uv** - Python package manager and project management
+- **Python 3.13+** - Programming language
+- **asyncio** - Asynchronous programming
+- **logging** - Application logging
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Add tests for new functionality
+4. Ensure all tests pass
+5. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🆘 Support
+
+For issues and questions:
+
+1. Check the troubleshooting section
+2. Review API documentation
+3. Open an issue on GitHub
+4. Check environment variable configuration
+5. Refer to `DEPLOYMENT_GUIDE.md` for deployment help
+
+---
+
+**Built with ❤️ using LangGraph, MCP, and modern Python tooling**
