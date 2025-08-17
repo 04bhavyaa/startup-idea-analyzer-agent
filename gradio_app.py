@@ -283,10 +283,10 @@ def validate_environment():
     return [var for var in required if not os.getenv(var)]
 
 def create_html_section(title, content):
-    """Create a clean HTML section."""
+    """Create a clean HTML section with dark theme."""
     return f"""
-    <div style="background-color: #f8f9fa; padding: 1rem; border-radius: 6px; margin: 0.5rem 0; border-left: 4px solid #007bff;">
-        <h4 style="margin-top: 0; color: #333;">{title}</h4>
+    <div style="background-color: #2D3748; padding: 1rem; border-radius: 6px; margin: 0.5rem 0; border-left: 4px solid #63B3ED; color: #E2E8F0;">
+        <h4 style="margin-top: 0; color: #FFFFFF;">{title}</h4>
         {content}
     </div>
     """
@@ -310,34 +310,34 @@ def format_results_to_html(result):
     
     # Main idea section
     idea_html = f"""
-    <div style="background-color: #e3f2fd; padding: 1rem; border-radius: 6px; margin: 1rem 0; border-left: 4px solid #2196f3;">
-        <h3 style="margin-top: 0;">Startup Idea: {startup.name}</h3>
+    <div style="background-color: #2C5282; padding: 1rem; border-radius: 6px; margin: 1rem 0; border-left: 4px solid #63B3ED; color: #EBF8FF;">
+        <h3 style="margin-top: 0; color: #FFFFFF;">Startup Idea: {startup.name}</h3>
         <p>{startup.description or 'No description provided'}</p>
     </div>
     """
 
     # Market analysis
     market = startup.market_analysis
-    market_content = "<p>No market analysis available.</p>"
+    market_content = "<p style='color: #E2E8F0;'>No market analysis available.</p>"
     if market:
         market_content = f"""
-        <p><strong>Market Size:</strong> {market.market_size or 'Unknown'}</p>
-        <p><strong>Growth Rate:</strong> {market.growth_rate or 'Unknown'}</p>
-        <p><strong>Target Audience:</strong> {', '.join(market.target_audience) if market.target_audience else 'N/A'}</p>
-        <p><strong>Market Trends:</strong> {', '.join(market.market_trends) if market.market_trends else 'N/A'}</p>
+        <p style='color: #E2E8F0;'><strong style='color: #FFFFFF;'>Market Size:</strong> {market.market_size or 'Unknown'}</p>
+        <p style='color: #E2E8F0;'><strong style='color: #FFFFFF;'>Growth Rate:</strong> {market.growth_rate or 'Unknown'}</p>
+        <p style='color: #E2E8F0;'><strong style='color: #FFFFFF;'>Target Audience:</strong> {', '.join(market.target_audience) if market.target_audience else 'N/A'}</p>
+        <p style='color: #E2E8F0;'><strong style='color: #FFFFFF;'>Market Trends:</strong> {', '.join(market.market_trends) if market.market_trends else 'N/A'}</p>
         """
     market_html = create_html_section("Market Analysis", market_content)
     
     # Competitors
-    competitors_content = "<p>No competitors found.</p>"
+    competitors_content = "<p style='color: #E2E8F0;'>No competitors found.</p>"
     if startup.competitors:
         competitors_list = []
         for i, comp in enumerate(startup.competitors[:5], 1):
             competitors_list.append(f"""
-            <div style="border-bottom: 1px solid #dee2e6; padding: 10px 0;">
-                <strong>{i}. {comp.name}</strong><br>
-                <small>Website: <a href="{comp.website}" target="_blank">{comp.website}</a></small><br>
-                <small>Key Features: {', '.join(comp.key_features[:3]) if comp.key_features else 'N/A'}</small>
+            <div style="border-bottom: 1px solid #4A5568; padding: 10px 0;">
+                <strong style="color: #FFFFFF;">{i}. {comp.name}</strong><br>
+                <small style="color: #E2E8F0;">Website: <a href="{comp.website}" target="_blank" style="color: #63B3ED;">{comp.website}</a></small><br>
+                <small style="color: #E2E8F0;">Key Features: {', '.join(comp.key_features[:3]) if comp.key_features else 'N/A'}</small>
             </div>
             """)
         competitors_content = ''.join(competitors_list)
@@ -345,20 +345,20 @@ def format_results_to_html(result):
 
     # Viability assessment
     analysis = startup.startup_analysis
-    viability_content = "<p>No viability assessment available.</p>"
+    viability_content = "<p style='color: #E2E8F0;'>No viability assessment available.</p>"
     if analysis:
         viability_content = f"""
         {format_viability_score(analysis.viability_score)}
-        <p><strong>Market Opportunity:</strong> {analysis.market_opportunity or 'N/A'}</p>
-        <p><strong>Competitive Advantages:</strong> {', '.join(analysis.competitive_advantage) if analysis.competitive_advantage else 'N/A'}</p>
-        <p><strong>Potential Challenges:</strong> {', '.join(analysis.potential_challenges) if analysis.potential_challenges else 'N/A'}</p>
+        <p style='color: #E2E8F0;'><strong style='color: #FFFFFF;'>Market Opportunity:</strong> {analysis.market_opportunity or 'N/A'}</p>
+        <p style='color: #E2E8F0;'><strong style='color: #FFFFFF;'>Competitive Advantages:</strong> {', '.join(analysis.competitive_advantage) if analysis.competitive_advantage else 'N/A'}</p>
+        <p style='color: #E2E8F0;'><strong style='color: #FFFFFF;'>Potential Challenges:</strong> {', '.join(analysis.potential_challenges) if analysis.potential_challenges else 'N/A'}</p>
         """
     viability_html = create_html_section("Viability Assessment", viability_content)
 
     # Recommendations
-    recommendations_content = f"<p>{result.final_analysis or 'No recommendations available.'}</p>"
+    recommendations_content = f"<p style='color: #E2E8F0;'>{result.final_analysis or 'No recommendations available.'}</p>"
     if result.recommendations:
-        recommendations_content += "<ul>" + ''.join(f'<li>{rec}</li>' for rec in result.recommendations) + "</ul>"
+        recommendations_content += "<ul style='color: #E2E8F0;'>" + ''.join(f'<li>{rec}</li>' for rec in result.recommendations) + "</ul>"
     recommendations_html = create_html_section("Recommendations & Key Takeaways", recommendations_content)
 
     return idea_html + market_html + competitors_html + viability_html + recommendations_html
