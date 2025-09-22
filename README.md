@@ -11,7 +11,6 @@ An AI-powered startup analysis platform that automatically researches and evalua
 - **Multiple Interfaces**: Web UI (Gradio) and Command Line Interface
 - **Report Generation**: Export analysis in Text, PDF, and Word formats
 - **Modular Architecture**: MCP-based tool servers for easy extension
-- **Deployment Ready**: Includes Hugging Face Spaces deployment configuration
 
 ## 🏗️ Architecture
 
@@ -63,14 +62,10 @@ startup-idea-analyzer-agent/
 │   └── social_trends_server.py  # Social media analysis server
 ├── main.py                      # CLI application entry point
 ├── gradio_app.py                # Web interface application
-├── app.py                       # Hugging Face Spaces deployment app
-├── requirements.txt             # Python dependencies for deployment
 ├── pyproject.toml               # Project configuration and dependencies
 ├── uv.lock                      # Dependency lock file
 ├── .python-version              # Python version specification
 ├── .gitignore                   # Git ignore rules
-├── DEPLOYMENT_GUIDE.md          # Hugging Face Spaces deployment guide
-├── README_HF.md                 # Hugging Face Spaces specific README
 └── README.md                    # This file
 ```
 
@@ -140,15 +135,6 @@ Structured Pydantic models for:
   - Environment validation
   - Error handling and recovery
 
-#### Hugging Face Spaces App (`app.py`)
-
-- **Purpose**: Optimized for Hugging Face Spaces deployment
-- **Features**:
-  - Streamlined Gradio interface
-  - Hugging Face Spaces specific configuration
-  - Optimized for cloud deployment
-  - Environment variable integration
-
 ## 🚀 Quick Start
 
 ### 1. Environment Setup
@@ -204,39 +190,6 @@ uv run python main.py
 # Use app.py for Hugging Face Spaces
 uv run python app.py
 ```
-
-## 🌐 Deployment Options
-
-### Hugging Face Spaces (Recommended for Demo)
-
-The project includes ready-to-deploy configuration for Hugging Face Spaces:
-
-1. **Files Included**:
-
-   - `app.py`: Optimized Gradio app for Spaces
-   - `requirements.txt`: Dependencies for deployment
-   - `DEPLOYMENT_GUIDE.md`: Step-by-step deployment guide
-   - `README_HF.md`: Spaces-specific documentation
-
-2. **Quick Deployment**:
-
-   - Create new Space on Hugging Face
-   - Upload project files
-   - Set environment variables in Space settings
-   - Deploy automatically
-
-3. **Features**:
-   - Free hosting
-   - Automatic HTTPS
-   - Easy environment variable management
-   - Community sharing
-
-### Other Deployment Options
-
-- **Railway**: For production SaaS applications
-- **Render**: For scalable web applications
-- **Google Cloud Run**: For enterprise deployments
-- **AWS Lambda**: For serverless API deployment
 
 ## 📊 Analysis Output
 
@@ -356,10 +309,6 @@ The system includes robust error handling:
 4. Ensure all tests pass
 5. Submit a pull request
 
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
 ## 🆘 Support
 
 For issues and questions:
@@ -371,9 +320,6 @@ For issues and questions:
 5. Refer to `DEPLOYMENT_GUIDE.md` for deployment help
 
 ---
-
-**Built with ❤️ using LangGraph, MCP, and modern Python tooling**
-
 
 ## developer aspect
 ## what technologies can be used or needs to be implemented in this
