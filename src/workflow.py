@@ -18,6 +18,18 @@ from .models import (
 )
 from .prompts import StartupAnalysisPrompts
 
+# Minimal async analyze_idea for FastAPI handler (for Vercel)
+import asyncio
+_workflow_instance = None
+async def analyze_idea(idea: str):
+    global _workflow_instance
+    if _workflow_instance is None:
+        from src.workflow import StartupWorkflow
+        _workflow_instance = StartupWorkflow()
+    result = await _workflow_instance.run(idea)
+    # Convert result to dict for JSON serialization
+    return result.model_dump() if hasattr(result, 'model_dump') else dict(result)
+
 
 class StartupWorkflow:
     def __init__(self):
