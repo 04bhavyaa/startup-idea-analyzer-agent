@@ -373,3 +373,7 @@ For issues and questions:
 ---
 
 **Built with ❤️ using LangGraph, MCP, and modern Python tooling**
+
+
+## developer aspect
+## what technologies can be used or needs to be implemented in this
