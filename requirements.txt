@@ -1,4 +1,6 @@
 asyncio
+docx
+google-search-results
 langchain
 langchain-google-genai
 langchain-mcp-adapters
@@ -10,7 +12,11 @@ polygon-api-client
 praw
 pydantic
 python-dotenv
+reportlab
 requests
 serp
+gradio
 tweepy
+uvicorn
+jinja2
 fastapi
